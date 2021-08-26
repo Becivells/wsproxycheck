@@ -3,7 +3,7 @@
 # https://goreleaser.com/customization/build/
 project_name: proxycheck
 gomod:
-  proxy: true
+  proxy: false
 builds:
   - env: [CGO_ENABLED=0]
     binary: proxycheck
