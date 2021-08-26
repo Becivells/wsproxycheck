@@ -1,8 +1,10 @@
+
 <!doctype html>
 <html>
 <head>
-    <title>Proxy Detect</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Proxy Detect</title>
     <style>
         body {
             font-family: monospace;
@@ -15,49 +17,37 @@
     status: <span id="textProxy">...</span>
 </div>
 <script>
-    var buf = new Uint8Array(1024 * 150)
+    var buf = new Uint8Array(1024)
     host = window.location.host;
     var ws = new WebSocket("ws://" + host + "/echo")
-    console.log('connecting...')
-    var lastBufLen = -1
 
-    function update() {
-        var bufLen = ws.bufferedAmount
-        if (bufLen !== lastBufLen) {
-            lastBufLen = bufLen
-            console.log('bufferedAmount:', bufLen, performance.now())
-        }
-    }
+    console.log('connecting...')
+
 
     var tid
-    //打开 websocket
-    ws.onopen = function () {
+    ws.onopen = function() {
         console.log('onopen')
     }
-    // 发送消息
-    ws.onmessage = function (e) {
+    ws.onmessage = function(e) {
         console.log('onmessage. recv: %d bytes', e.data.length)
-        send()
-        send()
-        console.log(ws.bufferedAmount)
-        console.log('start write:', performance.now())
-        // tid = setInterval(update, 1)
+        // console.log('start write:', performance.now())
+        // tid = setInterval(trace, 1)
 
-        setTimeout(function () {
-            console.log(ws.bufferedAmount)
-            // 全部发出去则为代理
+        for (let i = 0; i < 1024; i++) {
+            send()
+        }
+        setTimeout(function() {
             textProxy.textContent = !ws.bufferedAmount
         }, 1000)
     }
-    ws.onclose = function () {
+    ws.onclose = function() {
         console.log('onclose')
-        // update()
+        // trace()
         clearInterval(tid)
     }
-    ws.onerror = function () {
+    ws.onerror = function() {
         console.log('onerror')
     }
-
     function send() {
         ws.send(buf)
     }
